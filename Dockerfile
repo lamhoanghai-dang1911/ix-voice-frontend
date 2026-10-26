@@ -1,19 +1,14 @@
-# ==============================================================================
-# INTEGRIX IX.VOICE - FRONTEND DOCKERFILE (MULTI-STAGE BUILD)
-# ==============================================================================
-
 # Stage 1: Build static assets
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
 # Copy dependency files
-COPY frontend/package*.json ./
+COPY package*.json ./
 RUN npm ci
 
-# Copy contracts (for fallback mock imports) and frontend code
-COPY contracts /contracts
-COPY frontend/ ./
+# Copy frontend code
+COPY . .
 
 # Build production bundle
 RUN npm run build
@@ -28,7 +23,7 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy custom nginx configuration
-COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
