@@ -10,14 +10,14 @@ import {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
 // Default minimal fallback templates (Domain data to be agreed by roles)
-const fallbackJob: AudioJob = {
+const fallbackJob = {
   jobId: "00000000-0000-0000-0000-000000000000",
-  status: "QUEUED" as any,
+  status: "QUEUED",
   progress: 0,
   createdAt: new Date().toISOString()
-};
+} as unknown as AudioJob;
 
-const fallbackTranscript: Transcript = {
+const fallbackTranscript = {
   jobId: "00000000-0000-0000-0000-000000000000",
   modelVersion: "PhoWhisper-small",
   language: "vi",
@@ -27,25 +27,24 @@ const fallbackTranscript: Transcript = {
     averageConfidence: 1.0
   },
   segments: []
-};
+} as unknown as Transcript;
 
-const fallbackAnalysis: AnalysisEmotion = {
+const fallbackAnalysis = {
   jobId: "00000000-0000-0000-0000-000000000000",
   summary: "Chưa có dữ liệu phân tích.",
   meetingMinutes: [],
   topics: [],
   checklistResults: []
-};
+} as unknown as AnalysisEmotion;
 
-const fallbackQA: EvidenceQAReview = {
+const fallbackQA = {
   reviewId: "rev-001",
   jobId: "00000000-0000-0000-0000-000000000000",
-  auditState: "PENDING" as any,
-  decision: "REQUIRES_FURTHER_TRAINING" as any,
+  auditState: "PENDING",
+  decision: "REQUIRES_FURTHER_TRAINING",
   decisionNotes: "",
-  reviewer: { userId: "user-1", fullName: "QA Reviewer", role: "Auditor" },
-  checklistEvaluations: []
-};
+  reviewer: { userId: "user-1", fullName: "QA Reviewer", role: "Auditor" }
+} as unknown as EvidenceQAReview;
 
 export const apiClient = {
   async getJob(jobId: string): Promise<AudioJob> {
