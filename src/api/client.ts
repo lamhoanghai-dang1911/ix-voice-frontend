@@ -9,11 +9,43 @@ import {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
-// Canonical fallback data for offline / standalone preview
-import fallbackJob from '../../../contracts/fixtures/mock_audio_job.json';
-import fallbackTranscript from '../../../contracts/fixtures/mock_transcript.json';
-import fallbackAnalysis from '../../../contracts/fixtures/mock_analysis_emotion.json';
-import fallbackQA from '../../../contracts/fixtures/mock_evidence_qa.json';
+// Default minimal fallback templates (Domain data to be agreed by roles)
+const fallbackJob: AudioJob = {
+  jobId: "00000000-0000-0000-0000-000000000000",
+  status: "QUEUED" as any,
+  progress: 0,
+  createdAt: new Date().toISOString()
+};
+
+const fallbackTranscript: Transcript = {
+  jobId: "00000000-0000-0000-0000-000000000000",
+  modelVersion: "PhoWhisper-small",
+  language: "vi",
+  qualityFlags: {
+    snrEstimateDb: 25.0,
+    lowConfidenceSegmentsCount: 0,
+    averageConfidence: 1.0
+  },
+  segments: []
+};
+
+const fallbackAnalysis: AnalysisEmotion = {
+  jobId: "00000000-0000-0000-0000-000000000000",
+  summary: "Chưa có dữ liệu phân tích.",
+  meetingMinutes: [],
+  topics: [],
+  checklistResults: []
+};
+
+const fallbackQA: EvidenceQAReview = {
+  reviewId: "rev-001",
+  jobId: "00000000-0000-0000-0000-000000000000",
+  auditState: "PENDING" as any,
+  decision: "REQUIRES_FURTHER_TRAINING" as any,
+  decisionNotes: "",
+  reviewer: { userId: "user-1", fullName: "QA Reviewer", role: "Auditor" },
+  checklistEvaluations: []
+};
 
 export const apiClient = {
   async getJob(jobId: string): Promise<AudioJob> {
@@ -22,8 +54,8 @@ export const apiClient = {
       if (!res.ok) throw new Error(`HTTP error ${res.status}`);
       return await res.json();
     } catch (err) {
-      console.warn('API unavailable, returning local fixture for job:', err);
-      return fallbackJob as unknown as AudioJob;
+      console.warn('API unavailable, returning minimal fallback for job:', err);
+      return fallbackJob;
     }
   },
 
@@ -33,8 +65,8 @@ export const apiClient = {
       if (!res.ok) throw new Error(`HTTP error ${res.status}`);
       return await res.json();
     } catch (err) {
-      console.warn('API unavailable, returning local fixture for transcript:', err);
-      return fallbackTranscript as unknown as Transcript;
+      console.warn('API unavailable, returning minimal fallback for transcript:', err);
+      return fallbackTranscript;
     }
   },
 
@@ -44,8 +76,8 @@ export const apiClient = {
       if (!res.ok) throw new Error(`HTTP error ${res.status}`);
       return await res.json();
     } catch (err) {
-      console.warn('API unavailable, returning local fixture for analysis:', err);
-      return fallbackAnalysis as unknown as AnalysisEmotion;
+      console.warn('API unavailable, returning minimal fallback for analysis:', err);
+      return fallbackAnalysis;
     }
   },
 
@@ -55,8 +87,8 @@ export const apiClient = {
       if (!res.ok) throw new Error(`HTTP error ${res.status}`);
       return await res.json();
     } catch (err) {
-      console.warn('API unavailable, returning local fixture for QA review:', err);
-      return fallbackQA as unknown as EvidenceQAReview;
+      console.warn('API unavailable, returning minimal fallback for QA review:', err);
+      return fallbackQA;
     }
   },
 
@@ -94,7 +126,7 @@ export const apiClient = {
     } catch (err) {
       console.warn('Submit review fallback to local mock update:', err);
       return {
-        ...(fallbackQA as unknown as EvidenceQAReview),
+        ...fallbackQA,
         ...payload,
         reviewedAt: new Date().toISOString(),
       };
